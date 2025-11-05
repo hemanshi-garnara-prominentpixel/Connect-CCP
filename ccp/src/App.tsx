@@ -1,7 +1,12 @@
 import React from "react";
+import ConnectCCP from "./components/ConnectCCP";
 
 const App = () => {
-  return <div>App</div>;
+  return (
+    <>
+      <ConnectCCP />
+    </>
+  );
 };
 
 export default App;
