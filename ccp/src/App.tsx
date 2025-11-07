@@ -1,12 +1,12 @@
-import React from "react";
-import ConnectCCP from "./components/ConnectCCP";
+import Dashboard from "./pages/Dashboard";
+import { ConnectProvider } from "./context/ConnectContext";
 
-const App = () => {
+function App() {
   return (
-    <>
-      <ConnectCCP />
-    </>
+    <ConnectProvider>
+      <Dashboard />
+    </ConnectProvider>
   );
-};
+}
 
 export default App;
