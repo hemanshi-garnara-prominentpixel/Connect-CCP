@@ -4,8 +4,7 @@ import "amazon-connect-streams";
 
 const CCPContainer = () => {
   const divRef = useRef<HTMLDivElement | null>(null);
-  const { addLog, setAgent } = useConnect();
-
+  const { addLog, addCallHistory, setAgent } = useConnect();
   useEffect(() => {
     if (!window.connect) {
       addLog("Amazon Connect Streams API not loaded!");
@@ -22,30 +21,57 @@ const CCPContainer = () => {
     });
 
     window.connect.agent((agent) => {
-      const name = agent.getName();
-      const status = agent.getAvailabilityState().state;
+      const agentName = agent.getName();
+      const agentStatus = agent.getAvailabilityState().state;
       const permission = agent.getPermissions();
 
-      setAgent({ name, status, permission });
-      addLog(`Agent Logged In: ${name}`);
+      setAgent({ agentName, agentStatus, permission });
+      addLog(`Agent Logged In: ${agentName}`);
       addLog(`Agent have Permission: ${permission.join(", ")}`);
 
       agent.onStateChange((stateChange) => {
         const newState = stateChange.newState;
-        setAgent((prev) => ({ ...prev, status: newState }));
-        addLog(`Agent State Changed: ${newState}`);
+        setAgent((prev) => ({ ...prev, agentStatus: newState }));
+        addLog(`Agent State Changed: ${newState} ( ${agentName} )`);
       });
     });
 
     connect.contact((contact) => {
-      contact.onIncoming(() => {
-        addLog(`Call is ringing for the agent`);
+      const callDetails = {
+        date: new Date().toLocaleDateString(),
+        startTime: new Date().toLocaleTimeString(),
+        endTime: null,
+        customerNumber:
+          contact.getInitialConnection()?.getEndpoint().phoneNumber ||
+          "Unknown",
+        contactId: contact.getContactId(),
+        type: (contact.isInbound() ? "Incoming" : "Outgoing") as
+          | "Incoming"
+          | "Outgoing",
+        status: "Connecting",
+      };
+
+      contact.onConnecting(() => {
+        addLog(`Call connecting with ${callDetails.customerNumber}`);
+      });
+      contact.onConnected(() => {
+        addLog(`Call Connected with ${callDetails.customerNumber}`);
+        // addCallHistory({ ...callDetails, endTime: null, status: "Connected" });
+      });
+      contact.onMissed(() => {
+        callDetails.status = "Missed";
+        addLog(`Missed Call from ${callDetails.customerNumber}`);
+        // addCallHistory({ ...callDetails, endTime: null, status: "Missed" });
+      });
+      contact.onEnded(() => {
+        addLog(`Call Ended`);
+        addCallHistory({
+          ...callDetails,
+          endTime: new Date().toLocaleTimeString(),
+          status: callDetails.status === "Missed" ? "Missed" : "Completed",
+        });
       });
 
-      contact.onConnecting(() => addLog(`Call connecting...`));
-      contact.onConnected(() => addLog(`Call Connected`));
-      contact.onMissed(() => addLog(`Missed Call`));
-      contact.onEnded(() => addLog(`Call Ended`));
       contact.onError((err) => addLog(`Error: ${JSON.stringify(err)}`));
     });
   }, []);
