@@ -1,10 +1,14 @@
 import { useEffect, useRef } from "react";
-import { useConnect } from "../context/ConnectContext";
 import "amazon-connect-streams";
+import { useAgent } from "../context/AgentContext";
+import { useLogs } from "../context/LogsContext";
+import { useCallHistory } from "../context/CallHistoryContext";
 
 const CCPContainer = () => {
   const divRef = useRef<HTMLDivElement | null>(null);
-  const { addLog, addCallHistory, setAgent } = useConnect();
+  const { setAgent } = useAgent();
+  const { addLog } = useLogs();
+  const { setCurrentCall, addCallHistory } = useCallHistory();
   useEffect(() => {
     if (!window.connect) {
       addLog("Amazon Connect Streams API not loaded!");
@@ -53,23 +57,48 @@ const CCPContainer = () => {
 
       contact.onConnecting(() => {
         addLog(`Call connecting with ${callDetails.customerNumber}`);
+        setCurrentCall({
+          isActive: true,
+          status: "Ringing",
+          customerNumber: callDetails.customerNumber,
+        });
       });
       contact.onConnected(() => {
         addLog(`Call Connected with ${callDetails.customerNumber}`);
-        // addCallHistory({ ...callDetails, endTime: null, status: "Connected" });
+        setCurrentCall({
+          isActive: true,
+          status: "Connected",
+          customerNumber: callDetails.customerNumber,
+        });
       });
       contact.onMissed(() => {
         callDetails.status = "Missed";
         addLog(`Missed Call from ${callDetails.customerNumber}`);
-        // addCallHistory({ ...callDetails, endTime: null, status: "Missed" });
+        setCurrentCall({
+          isActive: true,
+          status: "Missed",
+          customerNumber: callDetails.customerNumber,
+        });
       });
       contact.onEnded(() => {
         addLog(`Call Ended`);
+        setCurrentCall({
+          isActive: false,
+          status: "Completed",
+          customerNumber: callDetails.customerNumber,
+        });
         addCallHistory({
           ...callDetails,
           endTime: new Date().toLocaleTimeString(),
           status: callDetails.status === "Missed" ? "Missed" : "Completed",
         });
+        setTimeout(() => {
+          setCurrentCall({
+            isActive: false,
+            status: "Idle",
+            customerNumber: null,
+          });
+        }, 3000);
       });
 
       contact.onError((err) => addLog(`Error: ${JSON.stringify(err)}`));

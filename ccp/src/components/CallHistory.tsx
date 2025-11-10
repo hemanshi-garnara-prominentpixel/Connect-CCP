@@ -1,21 +1,21 @@
-import { useConnect } from "../context/ConnectContext";
+import { useCallHistory } from "../context/CallHistoryContext";
 
 const CallHistory = () => {
-  const { callHistory, clearHistory } = useConnect();
+  const { callHistory } = useCallHistory();
 
   return (
     <div className="bg-white border border-gray-300 rounded-xl shadow-md p-5 flex flex-col flex-1 min-h-[300px]">
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-semibold text-lg text-gray-800">Call History</h2>
 
-        {callHistory.length > 0 && (
+        {/* {callHistory.length > 0 && (
           <button
             onClick={clearHistory}
             className="px-3 py-1 rounded-md text-sm bg-red-500 hover:bg-red-600 text-white shadow-sm transition"
           >
             Clear All
           </button>
-        )}
+        )} */}
       </div>
 
       {callHistory.length === 0 ? (
@@ -23,7 +23,7 @@ const CallHistory = () => {
           No call history yet...
         </p>
       ) : (
-        <div className="overflow-x-auto max-h-[300px] overflow-y-auto rounded-lg border border-gray-200">
+        <div className="overflow-x-auto max-h-[290px] overflow-y-auto rounded-lg border border-gray-200">
           <table className="w-full text-sm">
             <thead className="sticky top-0 bg-gray-50 border-b border-gray-200 text-gray-700">
               <tr>

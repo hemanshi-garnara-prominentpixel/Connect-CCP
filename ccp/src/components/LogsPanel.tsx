@@ -1,7 +1,7 @@
-import { useConnect } from "../context/ConnectContext";
+import { useLogs } from "../context/LogsContext";
 
 const LogsPanel = () => {
-  const { logs, clearLogs } = useConnect();
+  const { logs, clearLogs } = useLogs();
 
   return (
     <div className="bg-white border border-gray-300 rounded-xl shadow-md p-5 flex flex-col flex-1 min-h-[300px]">

@@ -1,7 +1,7 @@
-import { useConnect } from "../context/ConnectContext";
+import { useAgent } from "../context/AgentContext";
 
 const AgentDetails = () => {
-  const { agent } = useConnect();
+  const { agent } = useAgent();
 
   return (
     <div className="p-5 bg-white border border-gray-300 rounded-xl shadow-md space-y-2">
@@ -18,7 +18,7 @@ const AgentDetails = () => {
             agent.agentStatus === "Available"
               ? "bg-green-500"
               : agent.agentStatus === "Offline"
-              ? "bg-red-300"
+              ? "bg-red-500"
               : "bg-yellow-500"
           }`}
         >

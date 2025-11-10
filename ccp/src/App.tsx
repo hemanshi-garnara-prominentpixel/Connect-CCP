@@ -1,11 +1,17 @@
 import Dashboard from "./pages/Dashboard";
-import { ConnectProvider } from "./context/ConnectContext";
+import { LogsProvider } from "./context/LogsContext";
+import { AgentProvider } from "./context/AgentContext";
+import { CallHistoryProvider } from "./context/CallHistoryContext";
 
 function App() {
   return (
-    <ConnectProvider>
-      <Dashboard />
-    </ConnectProvider>
+    <LogsProvider>
+      <AgentProvider>
+        <CallHistoryProvider>
+          <Dashboard />
+        </CallHistoryProvider>
+      </AgentProvider>
+    </LogsProvider>
   );
 }
 
