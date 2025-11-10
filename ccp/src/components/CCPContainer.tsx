@@ -3,6 +3,7 @@ import "amazon-connect-streams";
 import { useAgent } from "../context/AgentContext";
 import { useLogs } from "../context/LogsContext";
 import { useCallHistory } from "../context/CallHistoryContext";
+import { toast } from "react-toastify";
 
 const CCPContainer = () => {
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -37,6 +38,7 @@ const CCPContainer = () => {
         const newState = stateChange.newState;
         setAgent((prev) => ({ ...prev, agentStatus: newState }));
         addLog(`Agent State Changed: ${newState} ( ${agentName} )`);
+        toast.info(`Agent Status Updated: ${newState}`);
       });
     });
 
@@ -105,7 +107,7 @@ const CCPContainer = () => {
     });
   }, []);
 
-  return <div ref={divRef} className="flex-1 min-h-[450px]" />;
+  return <div ref={divRef} className="flex-1 min-h-[450px] " />;
 };
 
 export default CCPContainer;

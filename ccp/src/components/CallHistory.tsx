@@ -5,87 +5,53 @@ const CallHistory = () => {
 
   return (
     <div className="bg-white border border-gray-300 rounded-xl shadow-md p-5 flex flex-col flex-1 min-h-[300px]">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="font-semibold text-lg text-gray-800">Call History</h2>
-
-        {/* {callHistory.length > 0 && (
-          <button
-            onClick={clearHistory}
-            className="px-3 py-1 rounded-md text-sm bg-red-500 hover:bg-red-600 text-white shadow-sm transition"
-          >
-            Clear All
-          </button>
-        )} */}
+      <div className="flex justify-between items-center mb-3">
+        <p className="font-semibold text-gray-900 text-lg">Call History</p>
       </div>
 
-      {callHistory.length === 0 ? (
-        <p className="text-gray-500 text-center py-6 italic">
-          No call history yet...
-        </p>
-      ) : (
-        <div className="overflow-x-auto max-h-[290px] overflow-y-auto rounded-lg border border-gray-200">
-          <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-gray-50 border-b border-gray-200 text-gray-700">
-              <tr>
-                {/* <th className="py-2 px-3 text-left font-semibold">
-                  Contact ID
-                </th> */}
-                <th className="py-2 px-3 text-left font-semibold">Type</th>
-                <th className="py-2 px-3 text-left font-semibold">Customer</th>
-                <th className="py-2 px-3 text-left font-semibold">Date</th>
-                <th className="py-2 px-3 text-left font-semibold">Start</th>
-                <th className="py-2 px-3 text-left font-semibold">End</th>
-                <th className="py-2 px-3 text-left font-semibold">Status</th>
-              </tr>
-            </thead>
+      <div className="bg-gray-100 rounded-lg p-4 flex-1 overflow-y-auto text-sm max-h-[300px] space-y-2">
+        {callHistory.length === 0 && (
+          <p className="text-gray-500 text-center">No call history yet...</p>
+        )}
 
-            <tbody>
-              {callHistory.map((call, i) => (
-                <tr
-                  key={i}
-                  className="odd:bg-white even:bg-gray-50 hover:bg-gray-200 transition "
-                >
-                  {/* <td className="py-2 px-3 text-xs text-gray-600 truncate max-w-[120px]">
-                    {call.contactId}
-                  </td> */}
+        {[...callHistory].reverse().map((call, index) => (
+          <div
+            key={index}
+            className="bg-white border border-gray-300 rounded-md px-3 py-2 shadow-sm flex justify-between items-center"
+          >
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-3 h-3 rounded-full ${
+                  call.status === "Completed" ? "bg-green-500" : "bg-red-500"
+                }`}
+              ></div>
+              <span className={`font-semibold text-base`}>{call.type}</span>
+            </div>
 
-                  <td className="py-2 px-3">
-                    <span
-                      className={`px-2 py-1 text-sm font-medium ${
-                        call.type === "Incoming"
-                          ? " text-blue-700"
-                          : " text-purple-700"
-                      }`}
-                    >
-                      {call.type}
-                    </span>
-                  </td>
+            <div className="text-gray-600 text-sm">
+              Customer: {call.customerNumber}
+            </div>
 
-                  <td className="py-2 px-3">{call.customerNumber}</td>
-                  <td className="py-2 px-3">{call.date}</td>
-                  <td className="py-2 px-3">{call.startTime}</td>
-                  <td className="py-2 px-3">{call.endTime || "-"}</td>
-
-                  <td className="py-2 px-3">
-                    <span
-                      className={`px-2 py-1 text-xs font-semibold
-                      ${
-                        call.status === "Completed"
-                          ? "bg-blue-100 text-blue-700"
-                          : call.status === "Missed"
-                          ? "bg-red-100 text-red-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {call.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+            <div className="flex flex-col items-end text-right text-sm text-gray-500">
+              <span
+                className={`px-2 mb-2 py-1 rounded-lg text-xs font-semibold uppercase tracking-wide ${
+                  call.status === "Completed"
+                    ? "bg-green-100 text-green-700"
+                    : call.status === "Missed"
+                    ? "bg-red-100 text-red-700"
+                    : "bg-yellow-100 text-yellow-700"
+                }`}
+              >
+                {call.status}
+              </span>
+              <span className="mb-1">{call.date}</span>
+              <span>
+                {call.startTime} - {call.endTime || "-"}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

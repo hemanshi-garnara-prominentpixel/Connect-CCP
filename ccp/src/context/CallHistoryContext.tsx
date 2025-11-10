@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export type CallHistoryItem = {
   contactId: string;
@@ -46,9 +47,16 @@ export const CallHistoryProvider = ({
     const fetchHistory = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/calls/all");
-        setCallHistory(res.data);
+        setCallHistory(res.data.message);
       } catch (error) {
         console.error("Failed to fetch call history", error);
+        if (axios.isAxiosError(error)) {
+          toast.error(
+            error.response?.data?.message || "Failed to load call history"
+          );
+        } else {
+          toast.error("Unexpected error while loading call history");
+        }
       }
     };
 
@@ -59,9 +67,16 @@ export const CallHistoryProvider = ({
     try {
       const res = await axios.post("http://localhost:5000/api/calls/add", call);
 
-      setCallHistory((prev) => [...prev, res.data]); // append newly created one
+      setCallHistory((prev) => [...prev, res.data.message]);
+
+      toast.success("Call saved successfully");
     } catch (error) {
       console.error("Failed to add call history", error);
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed to save call");
+      } else {
+        toast.error("Unexpected error");
+      }
     }
   };
 
