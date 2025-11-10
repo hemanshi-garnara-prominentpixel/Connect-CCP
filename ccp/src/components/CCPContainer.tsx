@@ -3,7 +3,6 @@ import "amazon-connect-streams";
 import { useAgent } from "../context/AgentContext";
 import { useLogs } from "../context/LogsContext";
 import { useCallHistory } from "../context/CallHistoryContext";
-import { toast } from "react-toastify";
 
 const CCPContainer = () => {
   const divRef = useRef<HTMLDivElement | null>(null);
@@ -38,11 +37,12 @@ const CCPContainer = () => {
         const newState = stateChange.newState;
         setAgent((prev) => ({ ...prev, agentStatus: newState }));
         addLog(`Agent State Changed: ${newState} ( ${agentName} )`);
-        toast.info(`Agent Status Updated: ${newState}`);
       });
     });
 
     connect.contact((contact) => {
+      let connected = false;
+
       const callDetails = {
         date: new Date().toLocaleDateString(),
         startTime: new Date().toLocaleTimeString(),
@@ -66,6 +66,7 @@ const CCPContainer = () => {
         });
       });
       contact.onConnected(() => {
+        connected = true;
         addLog(`Call Connected with ${callDetails.customerNumber}`);
         setCurrentCall({
           isActive: true,
@@ -74,7 +75,7 @@ const CCPContainer = () => {
         });
       });
       contact.onMissed(() => {
-        callDetails.status = "Missed";
+        // callDetails.status = "Missed";
         addLog(`Missed Call from ${callDetails.customerNumber}`);
         setCurrentCall({
           isActive: true,
@@ -83,16 +84,21 @@ const CCPContainer = () => {
         });
       });
       contact.onEnded(() => {
+        const finalStatus = connected
+          ? "Completed"
+          : contact.isInbound()
+          ? "Missed"
+          : "Not Answered";
         addLog(`Call Ended`);
         setCurrentCall({
           isActive: false,
-          status: "Completed",
+          status: finalStatus,
           customerNumber: callDetails.customerNumber,
         });
         addCallHistory({
           ...callDetails,
           endTime: new Date().toLocaleTimeString(),
-          status: callDetails.status === "Missed" ? "Missed" : "Completed",
+          status: finalStatus,
         });
         setTimeout(() => {
           setCurrentCall({
@@ -107,7 +113,7 @@ const CCPContainer = () => {
     });
   }, []);
 
-  return <div ref={divRef} className="flex-1 min-h-[450px] " />;
+  return <div ref={divRef} className="flex-1 min-h-[450px]" />;
 };
 
 export default CCPContainer;

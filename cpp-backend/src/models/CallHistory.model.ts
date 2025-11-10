@@ -20,7 +20,7 @@ const callHistorySchema = new mongoose.Schema({
   endTime: String,
   status: {
     type: String,
-    enum: ["Completed", "Missed"],
+    enum: ["Completed", "Missed", "Not Answered"],
     required: true,
   },
 });
