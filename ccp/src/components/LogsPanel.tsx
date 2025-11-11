@@ -4,7 +4,7 @@ const LogsPanel = () => {
   const { logs, clearLogs } = useLogs();
 
   return (
-    <div className="bg-white border border-gray-300 rounded-xl shadow-md p-5 flex flex-col flex-1 min-h-[300px]">
+    <div className="bg-white border border-gray-300 rounded-xl shadow-md p-5 flex flex-col flex-1 min-h-[530px]">
       <div className="flex justify-between items-center mb-3">
         <p className="font-semibold text-gray-900 text-lg">Logs</p>
 
@@ -16,9 +16,11 @@ const LogsPanel = () => {
         </button>
       </div>
 
-      <div className="bg-gray-100 rounded-lg p-4 flex-1 overflow-y-auto text-sm max-h-[300px] space-y-2">
+      <div className="bg-gray-100 rounded-lg p-4 tracking-wider flex-1 overflow-y-auto text-sm max-h-[450px] space-y-2">
         {logs.length === 0 && (
-          <p className="text-gray-500 text-center">No logs yet...</p>
+          <p className="text-gray-600 font-semibold tracking-wide text-center text-lg py-2">
+            No logs yet...
+          </p>
         )}
 
         {[...logs].reverse().map((log, index) => (

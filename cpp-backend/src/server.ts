@@ -6,9 +6,14 @@ import callHistoryRoutes from "./routes/callHistory.routes";
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI as string).then(() => {
-  console.log("MongoDB Connected");
-});
+mongoose
+  .connect(process.env.MONGO_URI as string)
+  .then(() => {
+    console.log("MongoDB Connected");
+  })
+  .catch((error) =>
+    console.log(`[Error in connecting with database]- ${error}`)
+  );
 
 const app = express();
 const port = 5000;
